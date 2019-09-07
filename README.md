@@ -1,0 +1,1 @@
+This is a classic snake game using pygame.
