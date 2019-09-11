@@ -73,7 +73,7 @@ def message_to_screen(msg,color,x_displace=0,y_displace=0,size = "small"):
 def gameLoop():
 
     global direction
-    
+    direction = "Right"
     gameExit = False
     gameOver = False
 
@@ -85,6 +85,11 @@ def gameLoop():
     lead_x_change = 10
     lead_y_change = 0
 
+
+    tempx = 0
+    tempy = 0
+    pauPla = 0
+
     last_btn = 0
 
     snakeList = []
@@ -92,16 +97,18 @@ def gameLoop():
     #snakeList.append([display_width,display_height-block_size])
     #snakeList.append([display_width,display_height-(2*block_size)])
     
-    while not gameExit:
+    while not gameExit :
       #  event = pygame.event.get()
+        score = int((snake_length-1)/2)
 
         while gameOver == True:
             gameDisplay.fill(white)
             message_to_screen("Game Over!!!",red,y_displace = -50,size = "medium")
+            message_to_screen("Your Score: {}".format(score),blue)
             message_to_screen("Press N for new game and Q for quit",black,y_displace = 50)
             pygame.display.update()
 
-            for event in pygame.event.get():
+            for event in pygame.event.get() :
 
                 if event.type == pygame.QUIT:
                         gameExit = True
@@ -121,7 +128,23 @@ def gameLoop():
                 #gameDisplay.fill(white)
                 gameExit = True
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_LEFT and  lead_x_change == 0:
+
+                if event.key == pygame.K_p and pauPla == 0:
+                    tempx = lead_x_change
+                    tempy = lead_y_change
+                    lead_x_change = 0
+                    lead_y_change = 0
+                    pauPla = 1
+                    break
+                elif event.key == pygame.K_p and pauPla == 1:
+                    lead_x_change = tempx
+                    lead_y_change = tempy
+                    pauPla = 0
+                    break
+
+                if pauPla == 1:
+                    break
+                elif event.key == pygame.K_LEFT and  lead_x_change == 0:
                     lead_x_change = -block_size
                     lead_y_change = 0
                     direction = "Left"
@@ -142,17 +165,9 @@ def gameLoop():
                     direction = "Down"
                     break
       
-        '''        
-            if event.type == pygame.KEYUP:
-                if event.key == pygame.K_LEFT:
-                    lead_x_change = 0
-                if event.key == pygame.K_RIGHT:
-                    lead_x_change = 0
-                if event.key == pygame.K_UP:
-                    lead_y_change = 0
-                if event.key == pygame.K_DOWN:
-                    lead_y_change = 0 
-        '''
+        if pauPla == 1:
+            continue
+
         if lead_x >=display_width or lead_y >= display_height or lead_x < 0 or lead_y < 0:
             gameOver = True
 
@@ -180,7 +195,7 @@ def gameLoop():
         if lead_x == randAppleX and lead_y == randAppleY:
                 randAppleX = random.randrange(0,display_width-block_size,block_size)
                 randAppleY = random.randrange(0,display_height-block_size,block_size)
-                snake_length += 1
+                snake_length += 2
 
         clock.tick(FPS)
     quit()
