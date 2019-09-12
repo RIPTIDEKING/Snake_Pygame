@@ -35,6 +35,23 @@ smallFont = pygame.font.SysFont("comicsansms",25)
 medFont = pygame.font.SysFont("comicsansms",50)
 largeFont = pygame.font.SysFont("comicsansms",80)
 
+def game_intro():
+    intro = True
+    while intro:
+        gameDisplay.fill(white)
+        message_to_screen("Welocme to slither",green,0,-100,"large")
+        message_to_screen("The objective of the game is to eat red Apples.",
+                          black,y_displace = -30)
+        message_to_screen("The more apple you eat the longer you get.",
+                          black,y_displace =10)
+        message_to_screen("If you run into yourself or edges you die!!.",
+                          black,y_displace =50)
+        message_to_screen("Place C to play and Q to quit.",
+                          black,y_displace =180)
+        
+        pygame.display.update()
+        clock.tick(5)
+
 def snake(snakeList,block_size):
 
     if direction == "Right":
@@ -100,6 +117,8 @@ def gameLoop():
     while not gameExit :
       #  event = pygame.event.get()
         score = int((snake_length-1)/2)
+
+        game_intro()
 
         while gameOver == True:
             gameDisplay.fill(white)
