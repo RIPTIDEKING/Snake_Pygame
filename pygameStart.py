@@ -10,20 +10,26 @@ green = (0,255,0)
 darkGreen = (0,155,0)
 blue = (0,0,255)
 
-FPS = 15
-display_width = 800
-display_height = 600
-block_size = 10
+FPS = 10
+display_width = 1000
+display_height = 800
+block_size = 20
+MovementSpeed = (block_size)
 
 imgHead = pygame.image.load('snakeHead.png')
 imgBody = pygame.image.load('snakeBody.png')
 imgTail = pygame.image.load('snakeTail.png')
+appleMain = pygame.image.load('apple.png')
+
+pygame.display.set_icon(appleMain)
 
 gameDisplay = pygame.display.set_mode((display_width,display_height))
 pygame.display.set_caption('slither')
 pygame.display.update()
 
 direction = "Right"
+randAppleX = 0
+randAppleY = 0
 
 
 #gameDisplay.fill(white)
@@ -35,9 +41,28 @@ smallFont = pygame.font.SysFont("comicsansms",25)
 medFont = pygame.font.SysFont("comicsansms",50)
 largeFont = pygame.font.SysFont("comicsansms",80)
 
+def randomApple():
+    global randAppleX,randAppleY
+    randAppleX = round(random.randrange(0,display_width-block_size,block_size)/block_size)*block_size
+    randAppleY = round(random.randrange(0,display_height-block_size,block_size)/block_size)*block_size
+               
+
 def game_intro():
+    
     intro = True
+    
     while intro:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_c:
+                    intro = False
+                elif event.key == pygame.K_q:
+                    pygame.quit()
+                    quit()
+        
         gameDisplay.fill(white)
         message_to_screen("Welocme to slither",green,0,-100,"large")
         message_to_screen("The objective of the game is to eat red Apples.",
@@ -90,16 +115,17 @@ def message_to_screen(msg,color,x_displace=0,y_displace=0,size = "small"):
 def gameLoop():
 
     global direction
+    
+
     direction = "Right"
     gameExit = False
     gameOver = False
 
-    randAppleX = random.randrange(0,display_width-block_size,block_size)
-    randAppleY = random.randrange(0,display_height-block_size,block_size)
-
+    randomApple()
+    
     lead_x = display_width/2
     lead_y = display_height/2
-    lead_x_change = 10
+    lead_x_change = MovementSpeed
     lead_y_change = 0
 
 
@@ -117,8 +143,6 @@ def gameLoop():
     while not gameExit :
       #  event = pygame.event.get()
         score = int((snake_length-1)/2)
-
-        game_intro()
 
         while gameOver == True:
             gameDisplay.fill(white)
@@ -164,22 +188,22 @@ def gameLoop():
                 if pauPla == 1:
                     break
                 elif event.key == pygame.K_LEFT and  lead_x_change == 0:
-                    lead_x_change = -block_size
+                    lead_x_change = -MovementSpeed
                     lead_y_change = 0
                     direction = "Left"
                     break
                 elif event.key == pygame.K_RIGHT and lead_x_change == 0:
-                    lead_x_change = block_size
+                    lead_x_change = MovementSpeed
                     lead_y_change = 0
                     direction = "Right"
                     break
                 elif event.key == pygame.K_UP and lead_y_change == 0:
-                    lead_y_change = -block_size
+                    lead_y_change = -MovementSpeed
                     lead_x_change = 0
                     direction = "Up"
                     break
                 elif event.key == pygame.K_DOWN and lead_y_change == 0:
-                    lead_y_change = block_size
+                    lead_y_change = MovementSpeed
                     lead_x_change = 0
                     direction = "Down"
                     break
@@ -194,8 +218,9 @@ def gameLoop():
         lead_x += lead_x_change
         
         gameDisplay.fill(white)
-        pygame.draw.rect(gameDisplay,red,[randAppleX,randAppleY,block_size,block_size])
-
+        #pygame.draw.rect(gameDisplay,red,[randAppleX,randAppleY,block_size,block_size])
+        gameDisplay.blit(appleMain,(randAppleX,randAppleY));
+        
         snakeHead = []
         snakeHead.append(lead_x)
         snakeHead.append(lead_y)
@@ -212,13 +237,20 @@ def gameLoop():
         pygame.display.update()
      
         if lead_x == randAppleX and lead_y == randAppleY:
-                randAppleX = random.randrange(0,display_width-block_size,block_size)
-                randAppleY = random.randrange(0,display_height-block_size,block_size)
+                randomApple()
                 snake_length += 2
+
+##        if lead_x > randAppleX and lead_x < randAppleX+block_size or lead_x+block_size > randAppleX and lead_x+block_size < randAppleX+block_size:
+##                if lead_y >= randAppleY and lead_y <= randAppleY+block_size or lead_y+block_size >= randAppleY and lead_y+block_size <= randAppleY+block_size:
+##                    randAppleX = round(random.randrange(0,display_width-block_size,block_size)/block_size)*block_size
+##                    randAppleY = round(random.randrange(0,display_height-block_size,block_size)/block_size)*block_size
+##                    snake_length += 2
+
 
         clock.tick(FPS)
     quit()
 
+game_intro()
 gameLoop()
 
 
