@@ -12,14 +12,16 @@ blue = (0,0,255)
 
 FPS = 10
 display_width = 1000
-display_height = 800
+display_height = 600
 block_size = 20
 MovementSpeed = (block_size)
 
 imgHead = pygame.image.load('snakeHead.png')
 imgBody = pygame.image.load('snakeBody.png')
 imgTail = pygame.image.load('snakeTail.png')
-appleMain = pygame.image.load('apple.png')
+appleMain = pygame.image.load('appleSimple.png')
+apple2 = pygame.image.load('apple2.png')
+appleSpecial = pygame.image.load('appleultimate.png')
 
 pygame.display.set_icon(appleMain)
 
@@ -28,9 +30,17 @@ pygame.display.set_caption('slither')
 pygame.display.update()
 
 direction = "Right"
+
 randAppleX = 0
 randAppleY = 0
+randAppleX2 = 0
+randAppleY2 = 0
+randAppleXSpecial = 0
+randAppleYSpecial = 0
 
+
+
+countApple = 0
 
 #gameDisplay.fill(white)
 
@@ -41,12 +51,30 @@ smallFont = pygame.font.SysFont("comicsansms",25)
 medFont = pygame.font.SysFont("comicsansms",50)
 largeFont = pygame.font.SysFont("comicsansms",80)
 
+def newGameStart():
+    global countApple
+    countApple = 0
+
+def scoreDisplay(score):
+    text = smallFont.render("Score: "+str(score), True, black)
+    gameDisplay.blit(text,(0,0))
+
 def randomApple():
-    global randAppleX,randAppleY
+    global randAppleX,randAppleY,countApple
     randAppleX = round(random.randrange(0,display_width-block_size,block_size)/block_size)*block_size
     randAppleY = round(random.randrange(0,display_height-block_size,block_size)/block_size)*block_size
-               
+    countApple += 1         
 
+def randomApple2():
+    global randAppleX2,randAppleY2
+    randAppleX2 = round(random.randrange(0,display_width-block_size,block_size)/block_size)*block_size
+    randAppleY2 = round(random.randrange(0,display_height-block_size,block_size)/block_size)*block_size
+
+def randomAppleSpecial():
+    global randAppleXSpecial,randAppleYSpecial
+    randAppleXSpecial = round(random.randrange(0,display_width-block_size,block_size)/block_size)*block_size
+    randAppleYSpecial = round(random.randrange(0,display_height-block_size,block_size)/block_size)*block_size
+    
 def game_intro():
     
     intro = True
@@ -114,7 +142,7 @@ def message_to_screen(msg,color,x_displace=0,y_displace=0,size = "small"):
 
 def gameLoop():
 
-    global direction
+    global direction,countApple
     
 
     direction = "Right"
@@ -128,6 +156,12 @@ def gameLoop():
     lead_x_change = MovementSpeed
     lead_y_change = 0
 
+    appleEnable = True
+    apple2Enable = False
+    appleSpecialEnable = False
+
+    tempCountA2 = 0
+    tempCountAS = 0
 
     tempx = 0
     tempy = 0
@@ -142,7 +176,7 @@ def gameLoop():
     
     while not gameExit :
       #  event = pygame.event.get()
-        score = int((snake_length-1)/2)
+        score = int((snake_length-1))
 
         while gameOver == True:
             gameDisplay.fill(white)
@@ -163,6 +197,7 @@ def gameLoop():
                         gameExit = True
                     elif event.key == pygame.K_n:
                         gameLoop()
+                        newGameStart()
                     
         
         for event in pygame.event.get():
@@ -219,7 +254,12 @@ def gameLoop():
         
         gameDisplay.fill(white)
         #pygame.draw.rect(gameDisplay,red,[randAppleX,randAppleY,block_size,block_size])
-        gameDisplay.blit(appleMain,(randAppleX,randAppleY));
+        
+        gameDisplay.blit(appleMain,(randAppleX,randAppleY))
+        if apple2Enable:
+            gameDisplay.blit(apple2,(randAppleX2,randAppleY2))
+        if appleSpecialEnable:
+            gameDisplay.blit(appleSpecial,(randAppleXSpecial,randAppleYSpecial))
         
         snakeHead = []
         snakeHead.append(lead_x)
@@ -233,13 +273,44 @@ def gameLoop():
             if segment == snakeHead:
                 gameOver = True
         
-        snake(snakeList,block_size)    
+        snake(snakeList,block_size)
+        scoreDisplay(score)
+        
         pygame.display.update()
      
         if lead_x == randAppleX and lead_y == randAppleY:
-                randomApple()
-                snake_length += 2
+            snake_length += 1
+            randomApple()
+            if countApple%5 == 0:
+                randomApple2()
+                apple2Enable = True
+            if countApple%10 == 0:
+                randomAppleSpecial()
+                appleSpecialEnable = True
+                
+        if lead_x == randAppleX2 and lead_y == randAppleY2 and apple2Enable:
+            snake_length += 2
+            tempCountA2
+            apple2Enable = False
 
+        if lead_x == randAppleXSpecial and lead_y == randAppleYSpecial and appleSpecialEnable:
+            snake_length += 3
+            appleSpecialEnable = False
+            tempCountAS = 0
+
+        if apple2Enable:
+            if tempCountA2 < 60:
+                tempCountA2 += 1
+            else:
+                apple2Enable = False
+                tempCountA2 =0
+                
+        if appleSpecialEnable:
+            if tempCountAS < 30:
+                tempCountAS += 1
+            else:
+                appleSpecialEnable = False
+                tempCountAS = 0
 ##        if lead_x > randAppleX and lead_x < randAppleX+block_size or lead_x+block_size > randAppleX and lead_x+block_size < randAppleX+block_size:
 ##                if lead_y >= randAppleY and lead_y <= randAppleY+block_size or lead_y+block_size >= randAppleY and lead_y+block_size <= randAppleY+block_size:
 ##                    randAppleX = round(random.randrange(0,display_width-block_size,block_size)/block_size)*block_size
