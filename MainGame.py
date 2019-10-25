@@ -1,27 +1,16 @@
 import pygame
 import time
 import random
-pygame.init()
+from resorces_basic import *
+from button import *
 
-white = (255,255,255)
-black = (0,0,0)
-red = (255,0,0)
-green = (0,255,0)
-darkGreen = (0,155,0)
-blue = (0,0,255)
+pygame.init()
 
 FPS = 10
 display_width = 1000
 display_height = 600
 block_size = 20
 MovementSpeed = (block_size)
-
-imgHead = pygame.image.load('snakeHead.png')
-imgBody = pygame.image.load('snakeBody.png')
-imgTail = pygame.image.load('snakeTail.png')
-appleMain = pygame.image.load('appleSimple.png')
-apple2 = pygame.image.load('apple2.png')
-appleSpecial = pygame.image.load('appleultimate.png')
 
 pygame.display.set_icon(appleMain)
 
@@ -38,18 +27,9 @@ randAppleY2 = 0
 randAppleXSpecial = 0
 randAppleYSpecial = 0
 
-
-
 countApple = 0
 
-#gameDisplay.fill(white)
-
 clock = pygame.time.Clock()
-
-#functions Section
-smallFont = pygame.font.SysFont("comicsansms",25)
-medFont = pygame.font.SysFont("comicsansms",50)
-largeFont = pygame.font.SysFont("comicsansms",80)
 
 def newGameStart():
     global countApple
@@ -59,38 +39,59 @@ def scoreDisplay(score):
     text = smallFont.render("Score: "+str(score), True, black)
     gameDisplay.blit(text,(0,0))
 
-def randomApple():
+def randomApple(ls):
     global randAppleX,randAppleY,countApple
-    randAppleX = round(random.randrange(0,display_width-block_size,block_size)/block_size)*block_size
-    randAppleY = round(random.randrange(0,display_height-block_size,block_size)/block_size)*block_size
-    countApple += 1         
+    countApple += 1
+    rAx = 0
+    rAy = 0
+    rAx = round(random.randrange(0,display_width-block_size,block_size)/block_size)*block_size
+    rAy = round(random.randrange(0,display_height-block_size,block_size)/block_size)*block_size
+    for snakePart in ls:
+        if rAx == snakePart[0] and rAy == snakePart[1]:
+            randomApple(ls)
+            print(len(ls))
+            return
+    randAppleX = rAx
+    randAppleY = rAy
 
-def randomApple2():
+def randomApple2(ls):
     global randAppleX2,randAppleY2
-    randAppleX2 = round(random.randrange(0,display_width-block_size,block_size)/block_size)*block_size
-    randAppleY2 = round(random.randrange(0,display_height-block_size,block_size)/block_size)*block_size
-
-def randomAppleSpecial():
-    global randAppleXSpecial,randAppleYSpecial
-    randAppleXSpecial = round(random.randrange(0,display_width-block_size,block_size)/block_size)*block_size
-    randAppleYSpecial = round(random.randrange(0,display_height-block_size,block_size)/block_size)*block_size
+    rAx = 0
+    rAy = 0
+    rAx = round(random.randrange(0,display_width-block_size,block_size)/block_size)*block_size
+    rAy = round(random.randrange(0,display_height-block_size,block_size)/block_size)*block_size
+    for snakePart in ls:
+        if rAx == snakePart[0] and rAy == snakePart[1]:
+            randomApple2(ls)
+            return
+    randAppleX2 = rAx
+    randAppleY2 = rAy
     
+def randomAppleSpecial(ls):
+    global randAppleXSpecial,randAppleYSpecial
+    rAx = 0
+    rAy = 0
+    rAx = round(random.randrange(0,display_width-block_size,block_size)/block_size)*block_size
+    rAy = round(random.randrange(0,display_height-block_size,block_size)/block_size)*block_size
+    for snakePart in ls:
+        if rAx == snakePart[0] and rAy == snakePart[1]:
+            randomAppleSpecial(ls)
+            return
+    randAppleXSpecial = rAx
+    randAppleYSpecial = rAy
+
 def game_intro():
     
-    intro = True
-    
-    while intro:
+    intro = [True]
+    plBut = Button(gameDisplay,green,"Play",175,450,100,50,intro_play,(intro,))
+    opBtn = Button(gameDisplay,blue,"Option",450,450,100,50,None)
+    qtBtn = Button(gameDisplay,red,"Quit",725,450,100,50,onC_quit)
+    while intro[0]:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_c:
-                    intro = False
-                elif event.key == pygame.K_q:
-                    pygame.quit()
-                    quit()
-        
+
         gameDisplay.fill(white)
         message_to_screen("Welocme to slither",green,0,-100,"large")
         message_to_screen("The objective of the game is to eat red Apples.",
@@ -99,11 +100,12 @@ def game_intro():
                           black,y_displace =10)
         message_to_screen("If you run into yourself or edges you die!!.",
                           black,y_displace =50)
-        message_to_screen("Place C to play and Q to quit.",
-                          black,y_displace =180)
-        
+
+        plBut.drawBtn()
+        opBtn.drawBtn()
+        qtBtn.drawBtn()
         pygame.display.update()
-        clock.tick(5)
+        clock.tick(20)
 
 def snake(snakeList,block_size):
 
@@ -119,21 +121,8 @@ def snake(snakeList,block_size):
     gameDisplay.blit(headImg,(snakeList[-1][0],snakeList[-1][1]))
     
     for XnY in snakeList[:-1]:
-       # gameDisplay.blit(imgBody,(XnY[0],XnY[1]))
         pygame.draw.rect(gameDisplay,darkGreen,[XnY[0],XnY[1],block_size,block_size])
 
-##    if not len(snakeList) == 1:
-##        gameDisplay.blit(imgTail,(snakeList[0][0],snakeList[0][1]))    
-
-def text_objects(msg,color,size):
-    if size == "small":
-        screen_text = smallFont.render(msg, True, color)
-    elif size == "medium":
-        screen_text = medFont.render(msg, True, color)
-    elif size == "large":
-        screen_text = largeFont.render(msg, True, color)
-    
-    return screen_text, screen_text.get_rect()
 
 def message_to_screen(msg,color,x_displace=0,y_displace=0,size = "small"):
     textSurf, textRect = text_objects(msg,color,size)
@@ -149,7 +138,7 @@ def gameLoop():
     gameExit = False
     gameOver = False
 
-    randomApple()
+    randomApple([])
     
     lead_x = display_width/2
     lead_y = display_height/2
@@ -280,17 +269,17 @@ def gameLoop():
      
         if lead_x == randAppleX and lead_y == randAppleY:
             snake_length += 1
-            randomApple()
+            randomApple(snakeList)
             if countApple%5 == 0:
-                randomApple2()
+                randomApple2(snakeList)
                 apple2Enable = True
             if countApple%10 == 0:
-                randomAppleSpecial()
+                randomAppleSpecial(snakeList)
                 appleSpecialEnable = True
                 
         if lead_x == randAppleX2 and lead_y == randAppleY2 and apple2Enable:
             snake_length += 2
-            tempCountA2
+            tempCountA2 = 0
             apple2Enable = False
 
         if lead_x == randAppleXSpecial and lead_y == randAppleYSpecial and appleSpecialEnable:
