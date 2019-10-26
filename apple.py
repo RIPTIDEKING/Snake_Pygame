@@ -3,7 +3,6 @@ import random
 from resorces_basic import *
 
 def randomApple(ls,randAppArgs):
-    #global randAppleX,randAppleY,countApple
     randAppArgs['countApple'] += 1
     rAx = 0
     rAy = 0
@@ -18,7 +17,6 @@ def randomApple(ls,randAppArgs):
     randAppArgs['randAppleY'] = rAy
 
 def randomApple2(ls,randA2Args):
-    #global randAppleX2,randAppleY2
     rAx = 0
     rAy = 0
     rAx = round(random.randrange(0,display_width-block_size,block_size)/block_size)*block_size
@@ -31,7 +29,6 @@ def randomApple2(ls,randA2Args):
     randA2Args['randAppleY2'] = rAy
     
 def randomAppleSpecial(ls,randAsArgs):
-    #global randAppleXSpecial,randAppleYSpecial
     rAx = 0
     rAy = 0
     rAx = round(random.randrange(0,display_width-block_size,block_size)/block_size)*block_size

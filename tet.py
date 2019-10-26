@@ -1,7 +1,8 @@
-def ch(ab):
-    ab['aaa'] = 56
-    print(ab)
+class t:
+    def __init__(self, ls):
+        self.ls = ls
+        self.ls[1] = 5
 
-ab = {'countApp':45,'aaa':50}
-ch(ab)
-print(ab)
+ls = [0,1]
+tt = t(ls)
+print(ls)

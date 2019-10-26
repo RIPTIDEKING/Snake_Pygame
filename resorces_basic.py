@@ -1,4 +1,5 @@
 import pygame
+import time
 pygame.init()
 
 smallFont = pygame.font.SysFont("comicsansms",25)
@@ -21,13 +22,13 @@ appleMain = pygame.image.load('appleSimple.png')
 apple2 = pygame.image.load('apple2.png')
 appleSpecial = pygame.image.load('appleultimate.png')
 
-direction = "Right"
-
 FPS = 10
 display_width = 1000
 display_height = 600
 block_size = 20
 MovementSpeed = (block_size)
+
+clock = pygame.time.Clock()
 
 def text_objects(msg,color,size):
     if size == "small":
@@ -65,3 +66,7 @@ def newGame(gameLoop):
 
 def pause_onClick(pause):
     pause[0] = False
+
+def scoreDisplay(gameDisplay,score,color = black):
+    text = smallFont.render("Score: "+str(score), True, color)
+    gameDisplay.blit(text,(0,0))
