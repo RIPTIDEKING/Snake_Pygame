@@ -9,6 +9,7 @@ white = (255,255,255)
 black = (0,0,0)
 red = (190,0,0)
 green = (0,128,0)
+yellow = (200,200,0)
 l_green = (0,255,0)
 darkGreen = (0,155,0)
 blue = (0,0,255)
@@ -45,3 +46,7 @@ def onC_quit():
 
 def intro_play(intro):
     intro[0] = False
+
+def newGame_over(gameLoop,newGameStart):
+    gameLoop()
+    newGameStart()

@@ -2,7 +2,6 @@ from resorces_basic import *
 
 class Button:
 
-
     def __init__(self,gDisplay,color,msg,buttonX,buttonY,buttonWidth,buttonHeigth,onClicked,args=[],size="small",textColor = black,fade = 50):
 
         self.gameDisplay = gDisplay

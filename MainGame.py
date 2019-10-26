@@ -84,7 +84,7 @@ def game_intro():
     
     intro = [True]
     plBut = Button(gameDisplay,green,"Play",175,450,100,50,intro_play,(intro,))
-    opBtn = Button(gameDisplay,blue,"Option",450,450,100,50,None)
+    opBtn = Button(gameDisplay,yellow,"Option",450,450,100,50,None)
     qtBtn = Button(gameDisplay,red,"Quit",725,450,100,50,onC_quit)
     while intro[0]:
         for event in pygame.event.get():
@@ -162,7 +162,8 @@ def gameLoop():
     snake_length = 1
     #snakeList.append([display_width,display_height-block_size])
     #snakeList.append([display_width,display_height-(2*block_size)])
-    
+    newGameBtn = Button(gameDisplay,blue,"New Game",266,330,150,50,newGame_over,[gameLoop,newGameStart],fade = 100)
+    quitBtn = Button(gameDisplay,red,"Quit",634,330,150,50,onC_quit)
     while not gameExit :
       #  event = pygame.event.get()
         score = int((snake_length-1))
@@ -171,7 +172,9 @@ def gameLoop():
             gameDisplay.fill(white)
             message_to_screen("Game Over!!!",red,y_displace = -50,size = "medium")
             message_to_screen("Your Score: {}".format(score),blue)
-            message_to_screen("Press N for new game and Q for quit",black,y_displace = 50)
+            
+            newGameBtn.drawBtn()
+            quitBtn.drawBtn()
             pygame.display.update()
 
             for event in pygame.event.get() :
@@ -179,16 +182,8 @@ def gameLoop():
                 if event.type == pygame.QUIT:
                         gameExit = True
                         gameOver = False
-                
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_q:
-                        gameOver = False
-                        gameExit = True
-                    elif event.key == pygame.K_n:
-                        gameLoop()
-                        newGameStart()
                     
-        
+
         for event in pygame.event.get():
             
             if event.type == pygame.QUIT:
