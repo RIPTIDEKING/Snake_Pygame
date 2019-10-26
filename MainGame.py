@@ -48,38 +48,12 @@ def game_intro():
 
 def gameLoop():
 
-    # randAppArgs = {'countApple':0,'randAppleX':0,'randAppleY':0}
-    # randA2Args = {'randAppleX2':0,'randAppleY2':0}
-    # randAsArgs = {'randAppleXSpecial':0,'randAppleYSpecial':0}
-
-    # direction = "Right"
-    # gameExit = False
-    # gameOver = False
-
-    # randomApple([],randAppArgs)
-    
-    # lead_x = display_width/2
-    # lead_y = display_height/2
-    # lead_x_change = MovementSpeed
-    # lead_y_change = 0
-
-    # appleEnable = True
-    # apple2Enable = False
-    # appleSpecialEnable = False
-
-    # tempCountA2 = 0
-    # tempCountAS = 0
-
-    # last_btn = 0
-
-    # snakeList = []
-    # snake_length = 1
- 
     gameExit = [False]
-    orgMode = orgMod(gameDisplay,gameLoop,gameExit)
+    orgMode = levelMod(gameDisplay,gameLoop,gameExit)
     while not gameExit[0] :
         orgMode.updateOriginal()
         clock.tick(FPS)
+       
     quit()
 
 game_intro()

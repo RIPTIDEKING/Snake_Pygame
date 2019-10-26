@@ -11,6 +11,7 @@ class orgMod:
         self.gameDisplay = gameDisplay
         self.gameExit = gameExit
 
+        pygame.draw.rect(gameDisplay,red,[0,0,20,20])
         self.snakeList = []
         self.snake_length = 1
         self.randAppArgs = {'countApple':0,'randAppleX':0,'randAppleY':0}
@@ -20,7 +21,7 @@ class orgMod:
         self.direction = "Right"
         self.gameOver = False
 
-        randomApple([],self.randAppArgs)
+        self.randomAppleStart()
     
         self.lead_x = display_width/2
         self.lead_y = display_height/2
@@ -35,64 +36,30 @@ class orgMod:
         self.tempCountAS = 0
 
         self.last_btn = 0
-
+        self.score = 0
 
         self.newGameBtn = Button(gameDisplay,blue,"New Game",223,330,150,50,newGame,[gameLoop],fade = 100)
         self.quitBtn = Button(gameDisplay,red,"Quit",627,330,150,50,onC_quit)
 
+    def randomAppleStart(self):
+        randomApple([],self.randAppArgs)
+
     def updateOriginal(self):
-        score = int((self.snake_length-1))
-        while self.gameOver:
-            self.gameDisplay.fill(white)
-            message_to_screen(self.gameDisplay,"Game Over!!!",red,y_displace = -50,size = "medium")
-            message_to_screen(self.gameDisplay,"Your Score: {}".format(score),blue)
-            
-            self.newGameBtn.drawBtn()
-            self.quitBtn.drawBtn()
-            pygame.display.update()
+        self.score = int((self.snake_length-1))
+        
+        self.orgGameOver()
 
-            for event in pygame.event.get() :
-
-                if event.type == pygame.QUIT:
-                        self.gameExit = [True]
-                        self.gameOver = False
-
-        for event in pygame.event.get():
-            
-            if event.type == pygame.QUIT:
-                self.gameExit = [True]
-            if event.type == pygame.KEYDOWN:
-
-                if event.key == pygame.K_p:
-                    self.pause()
-                elif event.key == pygame.K_LEFT and  self.lead_x_change == 0:
-                    self.lead_x_change = -MovementSpeed
-                    self.lead_y_change = 0
-                    self.direction = "Left"
-                    break
-                elif event.key == pygame.K_RIGHT and self.lead_x_change == 0:
-                    self.lead_x_change = MovementSpeed
-                    self.lead_y_change = 0
-                    self.direction = "Right"
-                    break
-                elif event.key == pygame.K_UP and self.lead_y_change == 0:
-                    self.lead_y_change = -MovementSpeed
-                    self.lead_x_change = 0
-                    self.direction = "Up"
-                    break
-                elif event.key == pygame.K_DOWN and self.lead_y_change == 0:
-                    self.lead_y_change = MovementSpeed
-                    self.lead_x_change = 0
-                    self.direction = "Down"
-                    break
-        if self.lead_x >= display_width or self.lead_y >= display_height or self.lead_x < 0 or self.lead_y < 0:
-            self.gameOver = [True]
-
+        self.controls()
+        
         self.lead_y += self.lead_y_change
         self.lead_x += self.lead_x_change
-    
+        
+        self.boundaryCondition()
+
         self.gameDisplay.fill(white)
-    
+        pygame.draw.rect(self.gameDisplay,l_yellow,[0,0,1000,40])
+        self.drawLevel()
+
         self.gameDisplay.blit(appleMain,(self.randAppArgs['randAppleX'],self.randAppArgs['randAppleY']))
         if self.apple2Enable:
             self.gameDisplay.blit(apple2,(self.randA2Args['randAppleX2'],self.randA2Args['randAppleY2']))
@@ -112,19 +79,13 @@ class orgMod:
                 self.gameOver = True
     
         snake(self.gameDisplay,self.snakeList,imgHead,darkGreen,self.direction,block_size)
-        scoreDisplay(self.gameDisplay,score)
+        scoreDisplay(self.gameDisplay,self.score)
     
         pygame.display.update()
     
         if self.lead_x == self.randAppArgs['randAppleX'] and self.lead_y == self.randAppArgs['randAppleY']:
             self.snake_length += 1
-            randomApple(self.snakeList,self.randAppArgs)
-            if self.randAppArgs['countApple']%5 == 0:
-                randomApple2(self.snakeList,self.randA2Args)
-                self.apple2Enable = True
-            if self.randAppArgs['countApple']%10 == 0:
-                randomAppleSpecial(self.snakeList,self.randAsArgs)
-                self.appleSpecialEnable = True
+            self.newAppleLogic()
             
         if self.lead_x == self.randA2Args['randAppleX2'] and self.lead_y == self.randA2Args['randAppleY2'] and self.apple2Enable:
             self.snake_length += 2
@@ -166,3 +127,108 @@ class orgMod:
             newBtn.drawBtn()
             pygame.display.update()
             clock.tick(20)
+
+    def boundaryCondition(self):
+        if self.lead_x >= display_width or self.lead_y >= display_height or self.lead_x < 0 or self.lead_y < 0:
+            self.gameOver = [True]
+
+    def orgGameOver(self):
+        while self.gameOver:
+            self.gameDisplay.fill(white)
+            message_to_screen(self.gameDisplay,"Game Over!!!",red,y_displace = -50,size = "medium")
+            message_to_screen(self.gameDisplay,"Your Score: {}".format(self.score),blue)
+            
+            self.newGameBtn.drawBtn()
+            self.quitBtn.drawBtn()
+            pygame.display.update()
+
+            for event in pygame.event.get() :
+
+                if event.type == pygame.QUIT:
+                        self.gameExit[0] = True
+                        self.gameOver = False
+
+    def controls(self):
+        for event in pygame.event.get():
+            
+            if event.type == pygame.QUIT:
+                self.gameExit[0] = True
+            if event.type == pygame.KEYDOWN:
+
+                if event.key == pygame.K_p:
+                    self.pause()
+                elif event.key == pygame.K_LEFT and  self.lead_x_change == 0:
+                    self.lead_x_change = -MovementSpeed
+                    self.lead_y_change = 0
+                    self.direction = "Left"
+                    break
+                elif event.key == pygame.K_RIGHT and self.lead_x_change == 0:
+                    self.lead_x_change = MovementSpeed
+                    self.lead_y_change = 0
+                    self.direction = "Right"
+                    break
+                elif event.key == pygame.K_UP and self.lead_y_change == 0:
+                    self.lead_y_change = -MovementSpeed
+                    self.lead_x_change = 0
+                    self.direction = "Up"
+                    break
+                elif event.key == pygame.K_DOWN and self.lead_y_change == 0:
+                    self.lead_y_change = MovementSpeed
+                    self.lead_x_change = 0
+                    self.direction = "Down"
+                    break 
+    
+    def newAppleLogic(self):
+        randomApple(self.snakeList,self.randAppArgs)
+        if self.randAppArgs['countApple']%5 == 0:
+            randomApple2(self.snakeList,self.randA2Args)
+            self.apple2Enable = True
+        if self.randAppArgs['countApple']%10 == 0:
+            randomAppleSpecial(self.snakeList,self.randAsArgs)
+            self.appleSpecialEnable = True
+    
+    def drawLevel(self):
+        pass
+
+class orgModS(orgMod):
+
+    def boundaryCondition(self):
+        if self.lead_x >=  display_width:
+            self.lead_x = 0
+        elif self.lead_y >= display_height:
+            self.lead_y = 40
+        elif self.lead_x < 0:
+            self.lead_x = display_width-20
+        elif self.lead_y < 40:
+            self.lead_y = display_height-20
+
+class levelMod(orgModS):
+
+    def __init__(self,gameDisplay,gameLoop,gameExit):
+        self.level = 2
+        self.rectInfo = [
+            [],
+            [[0,40,1000,20],[0,60,20,540],[980,60,20,540],[20,580,960,20]]
+        ]
+        super().__init__(gameDisplay,gameLoop,gameExit)
+
+    
+    def randomAppleStart(self):
+        randomApple([],self.randAppArgs,self.rectInfo[self.level-1])
+
+    def drawLevel(self):
+        for recNo in self.rectInfo[self.level-1]:
+            pygame.draw.rect(self.gameDisplay,grey,recNo)
+
+    def newAppleLogic(self):
+        randomApple(self.snakeList,self.randAppArgs,self.rectInfo[self.level-1])
+        if self.randAppArgs['countApple']%5 == 0:
+            randomApple2(self.snakeList,self.randA2Args,self.rectInfo[self.level-1])
+            self.apple2Enable = True
+        if self.randAppArgs['countApple']%10 == 0:
+            randomAppleSpecial(self.snakeList,self.randAsArgs,self.rectInfo[self.level-1])
+            self.appleSpecialEnable = True
+
+    def borderCondition(self):
+        super().borderCondition()
+
