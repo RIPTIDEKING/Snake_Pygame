@@ -21,6 +21,14 @@ appleMain = pygame.image.load('appleSimple.png')
 apple2 = pygame.image.load('apple2.png')
 appleSpecial = pygame.image.load('appleultimate.png')
 
+direction = "Right"
+
+FPS = 10
+display_width = 1000
+display_height = 600
+block_size = 20
+MovementSpeed = (block_size)
+
 def text_objects(msg,color,size):
     if size == "small":
         screen_text = smallFont.render(msg, True, color)
@@ -30,6 +38,11 @@ def text_objects(msg,color,size):
         screen_text = largeFont.render(msg, True, color)
     
     return screen_text, screen_text.get_rect()
+
+def message_to_screen(gameDisplay,msg,color,x_displace=0,y_displace=0,size = "small"):
+    textSurf, textRect = text_objects(msg,color,size)
+    textRect.center = (display_width/2)+ x_displace,(display_height/2)+ y_displace
+    gameDisplay.blit(textSurf, textRect)
 
 def lColor(col,change = 50):
     lcol = []
@@ -47,6 +60,8 @@ def onC_quit():
 def intro_play(intro):
     intro[0] = False
 
-def newGame_over(gameLoop,newGameStart):
+def newGame(gameLoop):
     gameLoop()
-    newGameStart()
+
+def pause_onClick(pause):
+    pause[0] = False
