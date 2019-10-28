@@ -11,12 +11,9 @@ def randomApple(fLs,randAppArgs,extrals = []):
     for snakePart in fLs:
         if rAx == snakePart[0] and rAy == snakePart[1]:
             randomApple(fLs,randAppArgs,extrals)
-            print("snake:",rAx,rAy)
             return
     if checkBigRect(extrals,rAx,rAy):
         randomApple(fLs,randAppArgs,extrals)
-        print("rect:",rAx,rAy)
-        print("extrals:",extrals)
         return
     randAppArgs['randAppleX'] = rAx
     randAppArgs['randAppleY'] = rAy
@@ -25,7 +22,7 @@ def randomApple2(fLs,randA2Args,extrals = []):
     rAx = 0
     rAy = 0
     rAx = random.randrange(0,display_width-block_size,block_size)
-    rAy = random.randrange(0,display_height-block_size,block_size)
+    rAy = random.randrange(40,display_height-block_size,block_size)
     for snakePart in fLs:
         if rAx == snakePart[0] and rAy == snakePart[1]:
             randomApple2(fLs,randA2Args,extrals)
@@ -40,7 +37,7 @@ def randomAppleSpecial(fLs,randAsArgs,extrals=[]):
     rAx = 0
     rAy = 0
     rAx = random.randrange(0,display_width-block_size,block_size)
-    rAy = random.randrange(0,display_height-block_size,block_size)
+    rAy = random.randrange(40,display_height-block_size,block_size)
     for snakePart in fLs:
         if rAx == snakePart[0] and rAy == snakePart[1]:
             randomAppleSpecial(fLs,randAsArgs,extrals)
