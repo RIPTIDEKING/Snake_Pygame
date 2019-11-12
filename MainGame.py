@@ -6,6 +6,7 @@ from button import *
 from snake import *
 from apple import *
 from mods import *
+from modeSelect import *
 
 pygame.init()
 
@@ -14,8 +15,6 @@ pygame.display.set_icon(appleMain)
 gameDisplay = pygame.display.set_mode((display_width,display_height))
 pygame.display.set_caption('slither')
 pygame.display.update()
-
-
 
 
 def game_intro():
@@ -36,25 +35,29 @@ def game_intro():
                           black,y_displace = -30)
         message_to_screen(gameDisplay,"The more apple you eat the longer you get.",
                           black,y_displace =10)
-        message_to_screen(gameDisplay,"If you run into yourself or edges you die!!.",
+        message_to_screen(gameDisplay,"If you run into yourself or walls you die!!.",
                           black,y_displace =50)
 
         plBut.drawBtn()
-        opBtn.drawBtn()
+        # opBtn.drawBtn()
         qtBtn.drawBtn()
         pygame.display.update()
-        clock.tick(20)
+        clock.tick(10)
+    gameLoop()
 
 
 def gameLoop():
 
     gameExit = [False]
-    orgMode = levelMod(gameDisplay,gameLoop,gameExit)
+    #orgMode = levelMod(gameDisplay,gameLoop,gameExit)
+    selectMode = menus(gameDisplay,gameExit,game_intro)
+    selectMode.selectModeInit(gameLoop)
     while not gameExit[0] :
-        orgMode.updateOriginal()
+        # orgMode.updateOriginal()
+        selectMode.modeSelectMenu()
         clock.tick(FPS)
        
     quit()
 
 game_intro()
-gameLoop()
+# gameLoop()

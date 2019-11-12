@@ -18,8 +18,8 @@ darkGreen = (0,155,0)
 blue = (0,0,255)
 
 imgHead = pygame.image.load('snakeHead.png')
-imgBody = pygame.image.load('snakeBody.png')
-imgTail = pygame.image.load('snakeTail.png')
+imgHead1 = pygame.image.load('snakeBody.png')
+#imgTail = pygame.image.load('snakeTail.png')
 appleMain = pygame.image.load('appleSimple.png')
 apple2 = pygame.image.load('apple2.png')
 appleSpecial = pygame.image.load('appleultimate.png')
@@ -68,7 +68,13 @@ def newGame(gameLoop):
 
 def pause_onClick(pause):
     pause[0] = False
-
-def scoreDisplay(gameDisplay,score,color = black):
-    text = smallFont.render("Score: "+str(score), True, color)
+    
+def scoreDisplay(gameDisplay,score,color = black,lbl = "Score: "):
+    text = smallFont.render(lbl+str(score), True, color)
     gameDisplay.blit(text,(0,0))
+
+def lsAdd(ls):
+    val = 0
+    for i in ls:
+        val += i
+    return val
