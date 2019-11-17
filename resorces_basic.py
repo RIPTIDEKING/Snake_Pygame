@@ -2,11 +2,14 @@ import pygame
 import time
 pygame.init()
 
+screenDisplay = [" "]
+
 smallFont = pygame.font.SysFont("comicsansms",25)
 medFont = pygame.font.SysFont("comicsansms",50)
 largeFont = pygame.font.SysFont("comicsansms",80)
 
 white = (255,255,255)
+whiteA = (255,255,255,255)
 black = (0,0,0)
 red = (190,0,0)
 green = (0,128,0)
@@ -19,10 +22,10 @@ blue = (0,0,255)
 
 imgHead = pygame.image.load('snakeHead.png')
 imgHead1 = pygame.image.load('snakeBody.png')
-#imgTail = pygame.image.load('snakeTail.png')
 appleMain = pygame.image.load('appleSimple.png')
 apple2 = pygame.image.load('apple2.png')
 appleSpecial = pygame.image.load('appleultimate.png')
+appleEaster = pygame.image.load('appleEaster.png')
 
 FPS = 10
 display_width = 1000

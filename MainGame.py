@@ -15,6 +15,7 @@ pygame.display.set_icon(appleMain)
 gameDisplay = pygame.display.set_mode((display_width,display_height))
 pygame.display.set_caption('slither')
 pygame.display.update()
+screenDisplay[0] = gameDisplay
 
 
 def game_intro():

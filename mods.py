@@ -18,6 +18,7 @@ class orgMod:
         self.randAppArgs = {'countApple':0,'randAppleX':0,'randAppleY':0}
         self.randA2Args = {'randAppleX2':0,'randAppleY2':0}
         self.randAsArgs = {'randAppleXSpecial':0,'randAppleYSpecial':0}
+        self.randAppArgsE = {'randAppleXE':0,'randAppleYE':0}
 
         self.direction = "Right"
         self.gameOver = False
@@ -32,6 +33,7 @@ class orgMod:
         self.appleEnable = True
         self.apple2Enable = False
         self.appleSpecialEnable = False
+        self.appleEEnable = False
 
         self.tempCountA2 = 0
         self.tempCountAS = 0
@@ -45,6 +47,9 @@ class orgMod:
         self.cheatKey = True
         
         self.ls = [[0,40,1000,20],[0,60,20,540],[980,60,20,540],[20,580,960,20]]
+
+        self.eEval = True
+        self.foundE = False
 
     def randomAppleStart(self):
         randomApple([],self.randAppArgs)
@@ -72,9 +77,14 @@ class orgMod:
         self.gameDisplay.fill(white)
         pygame.draw.rect(self.gameDisplay,l_yellow,[0,0,1000,40])
         scoreDisplay(self.gameDisplay,self.score)
+        if self.foundE:
+            self.easterEgg()
         self.drawLevel()
 
-        self.gameDisplay.blit(appleMain,(self.randAppArgs['randAppleX'],self.randAppArgs['randAppleY']))
+        if self.appleEEnable:
+            self.gameDisplay.blit(appleEaster,(self.randAppArgsE['randAppleXE'],self.randAppArgsE['randAppleYE']))
+        else:
+            self.gameDisplay.blit(appleMain,(self.randAppArgs['randAppleX'],self.randAppArgs['randAppleY']))
         if self.apple2Enable:
             self.gameDisplay.blit(apple2,(self.randA2Args['randAppleX2'],self.randA2Args['randAppleY2']))
         if self.appleSpecialEnable:
@@ -95,6 +105,13 @@ class orgMod:
         snake(self.gameDisplay,self.snakeList,imgHead,darkGreen,self.direction,block_size)
         
         pygame.display.update()
+
+        if self.lead_x == self.randAppArgsE['randAppleXE'] and self.lead_y == self.randAppArgsE['randAppleYE']:
+            self.snake_length += 100
+            self.eEval = False
+            self.appleEEnable = False
+            self.foundE = True
+            self.newAppleLogic()
     
         if self.lead_x == self.randAppArgs['randAppleX'] and self.lead_y == self.randAppArgs['randAppleY']:
             self.snake_length += 1
@@ -104,22 +121,39 @@ class orgMod:
             self.snake_length += 2
             self.tempCountA2 = 0
             self.apple2Enable = False
+            if self.randAppArgs['countApple'] == 10 and self.eEval:
+                if self.appleSpecialEnable:
+                    self.eEval = False
+            else:    
+                self.eEval = False
+            print(self.eEval,self.randAppArgs['countApple'])
 
         if self.lead_x == self.randAsArgs['randAppleXSpecial'] and self.lead_y == self.randAsArgs['randAppleYSpecial'] and self.appleSpecialEnable:
             self.snake_length += 5
             self.appleSpecialEnable = False
             self.tempCountAS = 0
+            if self.randAppArgs['countApple'] == 10 and self.eEval:
+                pass
+            else:
+                self.eEval = False
+            print(self.eEval,self.randAppArgs['countApple'])
 
         if self.apple2Enable:
             if self.tempCountA2 < 70:
-                self.tempCountA2 += 1
+                if self.randAppArgs['countApple']==10 and self.eEval:
+                    pass
+                else:
+                    self.tempCountA2 += 1
             else:
                 self.apple2Enable = False
                 self.tempCountA2 =0
             
         if self.appleSpecialEnable:
             if self.tempCountAS < 40:
-                self.tempCountAS += 1
+                if self.randAppArgs['countApple']==10 and self.eEval:
+                    pass
+                else:    
+                    self.tempCountAS += 1
             else:
                 self.appleSpecialEnable = False
                 self.tempCountAS = 0
@@ -147,13 +181,37 @@ class orgMod:
             return True
         return False
 
-    def orgGameOver(self,fscore):
+    def highScore(self,hscore,mode = 0):
+        print(mode)
+        f = open("HighScore.txt","r")
+        ls = []
+        for i in f:
+            ls.append(i)
+        f.close()
+        # print(ls)
+        if int(ls[mode]) < hscore:
+            ls[mode] = str(hscore)+'\n'
+            w = open("HighScore.txt","w")
+            for i in ls:
+                w.write(i)
+            w.close()
+        rhs = int(ls[mode])
+        return rhs
+
+    def orgGameOver(self,fscore,mode=0):
+        flag = True
+        rhs = 0
         while self.gameOver:
-            self.gameDisplay.fill(white)
-            message_to_screen(self.gameDisplay,"Game Over!!!",red,y_displace = -50,size = "medium")
-            message_to_screen(self.gameDisplay,"Your Final Score: {}".format(fscore),blue)
-            
+            if flag:
+                hs = self.highScore(fscore,mode)
+                flag = False
+                self.gameDisplay.fill(white)
+                message_to_screen(self.gameDisplay,"Game Over!!!",red,y_displace = -100,size = "medium")
+                message_to_screen(self.gameDisplay,"Your Final Score: {}".format(fscore),blue,y_displace=-50)
+                message_to_screen(self.gameDisplay,"High Score: {} ".format(hs),blue)
+
             self.newGameBtn.drawBtn()
+            
             self.quitBtn.drawBtn()
             pygame.display.update()
 
@@ -199,13 +257,20 @@ class orgMod:
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_a:
                     self.cheatKey = True
-    
+
     def newAppleLogic(self):
-        randomApple(self.snakeList,self.randAppArgs)
-        if self.randAppArgs['countApple']%5 == 0:
+        if self.randAppArgs['countApple'] == 11 and self.eEval:
+            if self.appleSpecialEnable or self.apple2Enable:
+                self.eEval = False 
+            else:
+                randomAppleE(self.snakeList,self.randAppArgsE)
+                self.appleEEnable = True
+        else:
+            randomApple(self.snakeList,self.randAppArgs)
+        if (self.randAppArgs['countApple'])%5 == 0:
             randomApple2(self.snakeList,self.randA2Args)
             self.apple2Enable = True
-        if self.randAppArgs['countApple']%10 == 0:
+        if (self.randAppArgs['countApple'])%10 == 0:
             randomAppleSpecial(self.snakeList,self.randAsArgs)
             self.appleSpecialEnable = True
     
@@ -218,6 +283,10 @@ class orgMod:
 
     def gameInit(self):
         self.gameStart = False
+
+    def easterEgg(self):
+        #print("Here")
+        message_to_screen(self.gameDisplay,"Created By: Ayush Agarwal",green,y_displace=-280,size="small")
 
 class orgModS(orgMod):
 
@@ -235,12 +304,17 @@ class orgModS(orgMod):
     def drawLevel(self):
         pass
 
+    def orgGameOver(self, fscore, mode=1):
+        return super().orgGameOver(fscore, mode)
+
+
 class levelMod(orgModS):
 
     def __init__(self,gameDisplay,gameLoop,gameExit):
         self.level = 1
         self.scores = []
         self.tscore = 0
+        self.mode = 2
         self.rectInfo = [
             [],
             [[0,40,480,20],[520,40,480,20],[0,60,20,220],[0,320,20,280],[980,60,20,220],[980,320,20,280],[20,580,460,20],[520,580,460,20]],        
@@ -249,7 +323,7 @@ class levelMod(orgModS):
         ]
         super().__init__(gameDisplay,gameLoop,gameExit)
 
-    
+
     def randomAppleStart(self):
         randomApple([],self.randAppArgs,self.rectInfo[(self.level-1)%4])
 
@@ -330,9 +404,9 @@ class levelMod(orgModS):
                 clock.tick(1)
                 
             self.gameStart = False
-        
-    def orgGameOver(self, fscore):
-        return super().orgGameOver(self.tscore+fscore)
+
+    def orgGameOver(self, fscore,mode = 2):
+        return super().orgGameOver(self.tscore+fscore,mode)
     
 
 class multiPlayer(orgModS):
