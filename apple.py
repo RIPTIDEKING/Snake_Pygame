@@ -1,5 +1,4 @@
 import random
-
 from resorces_basic import *
 
 def randomApple(fLs,randAppArgs,extrals = []):
@@ -19,11 +18,11 @@ def randomApple(fLs,randAppArgs,extrals = []):
         print(extrals)
         print(rAx,rAy)
         return
-    if not screenDisplay[0].get_at((rAx+5,rAy+5)) == whiteA:
+    if not screenDisplay[0].get_at((rAx+5,rAy+5))==whiteA:
         randomApple(fLs,randAppArgs,extrals)
         print("here")
-    randAppArgs['randAppleX'] = rAx
-    randAppArgs['randAppleY'] = rAy
+    randAppArgs['randAppleX']=rAx
+    randAppArgs['randAppleY']=rAy
     print(screenDisplay[0].get_at((rAx,rAy)),screenDisplay[0].get_at((rAx+5,rAy+5)))
 
 def randomApple2(fLs,randA2Args,extrals = []):
@@ -81,4 +80,4 @@ def checkBigRect(rectInfo,rAx,rAy):
         if element[0]+element[2] > rAx >= element[0]:
             if element[1]+element[3] > rAy >= element[1]:
                 return True
-    return False
+                return False
