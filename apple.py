@@ -1,7 +1,5 @@
 import random
-
 from resorces_basic import *
-
 def randomApple(fLs,randAppArgs,extrals = []):
     randAppArgs['countApple'] += 1
     rAx = 0
